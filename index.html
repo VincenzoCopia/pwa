@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Enzo</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        img {
+            width: 150px;
+            height: auto;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        button {
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Benvenuto nella mia PWA!</h1>
+    <p>Scopri il mondo delle Progressive Web Apps.</p>
+
+    <img id="toggleImage" src="icons\icon-256x256.png" alt="Immagine">
+
+    <button id="toggleButton">Nascondi</button>
+    <button id="networkStatusBtn">Stato della rete</button>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleButton');
+        toggleBtn.style.backgroundColor = 'DodgerBlue';
+        const img = document.getElementById('toggleImage');
+
+
+        toggleBtn.onclick = function () {
+            if (img.style.visibility === 'hidden') {
+                img.style.visibility = 'visible';
+                toggleBtn.textContent = 'Nascondi';
+            } else {
+                img.style.visibility = 'hidden';
+                toggleBtn.textContent = 'Mostra';
+            }
+        };
+
+        const networkStatusBtn = document.getElementById('networkStatusBtn');
+
+        function updateNetworkStatus() {
+            if (navigator.onLine) {
+                networkStatusBtn.style.backgroundColor = 'green';
+                networkStatusBtn.textContent = 'Online';
+            } else {
+                networkStatusBtn.style.backgroundColor = 'red';
+                networkStatusBtn.textContent = 'Offline';
+            }
+        }
+
+        // Aggiorna lo stato della rete all'avvio
+        updateNetworkStatus();
+
+        // Ascoltatori per gli eventi online e offline
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js').then(function (registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function (err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
