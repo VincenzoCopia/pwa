@@ -35,6 +35,7 @@ window.addEventListener('offline', updateNetworkStatus);
 
 // Lettura NFC
 const nfcMessageElement = document.getElementById('nfcMessage');
+const startNFCScanButton = document.getElementById('startNFCScanButton');
 
 async function readNFC() {
     if ("NDEFReader" in window) {
@@ -72,11 +73,4 @@ async function readNFC() {
     }
 }
 
-// Aggiungo un pulsante per richiedere esplicitamente l'accesso NFC
-const startNFCScanButton = document.createElement('button');
-startNFCScanButton.textContent = 'Attiva Scanner NFC';
 startNFCScanButton.onclick = readNFC;
-document.body.insertBefore(startNFCScanButton, nfcMessageElement);
-
-// Non avviamo più automaticamente la scansione
-// readNFC();
