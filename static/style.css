@@ -17,6 +17,13 @@ img {
     display: block;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
 button {
     padding: 10px 20px;
     text-align: center;
@@ -24,7 +31,15 @@ button {
     border-radius: 12px;
     border: none;
     cursor: pointer;
-    margin-top: 20px;
+}
+
+#startNFCScanButton {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#startNFCScanButton:hover {
+    background-color: #45a049;
 }
 
 .nfc-message {
