@@ -36,17 +36,28 @@ window.addEventListener('offline', updateNetworkStatus);
 // Lettura NFC
 const nfcMessageElement = document.getElementById('nfcMessage');
 
-if ("NDEFReader" in window) {
-    const reader = new NDEFReader();
-    reader.scan().then(() => {
-        nfcMessageElement.textContent = "Scanner NFC attivo, avvicina un tag";
-        reader.onreading = (event) => {
-            const { serialNumber } = event;
-            nfcMessageElement.textContent = `Tag NFC rilevato! UID: ${serialNumber}`;
-        };
-    }).catch((error) => {
-        nfcMessageElement.textContent = `Errore scanner NFC: ${error}`;
-    });
-} else {
-    nfcMessageElement.textContent = "Web NFC non supportato in questo browser";
+async function readNFC() {
+    if ("NDEFReader" in window) {
+        try {
+            const reader = new NDEFReader();
+            await reader.scan();
+            nfcMessageElement.textContent = "Scan NFC avviato 2... Avvicina un tag!";
+            console.log("Scan NFC avviato... Avvicina un tag!");
+            
+            reader.onreading = (event) => {
+                nfcMessageElement.textContent = "Tag rilevato!";
+                console.log("Tag rilevato!");
+                nfcMessageElement.textContent = "UID del Tag:", event.serialNumber;
+                console.log("UID del Tag:", event.serialNumber);
+            };
+        } catch (error) {
+            nfcMessageElement.textContent = "Errore durante la lettura NFC:";
+            console.error("Errore durante la lettura NFC:", error);
+        }
+    } else {
+        nfcMessageElement.textContent = "Web NFC non supportato nel browser.";
+        console.log("Web NFC non supportato nel browser.");
+    }
 }
+
+readNFC();
