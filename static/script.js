@@ -39,25 +39,44 @@ const nfcMessageElement = document.getElementById('nfcMessage');
 async function readNFC() {
     if ("NDEFReader" in window) {
         try {
+            // Richiedo il permesso NFC
+            const permissionStatus = await navigator.permissions.query({ name: "nfc" });
+            
+            if (permissionStatus.state === "denied") {
+                nfcMessageElement.textContent = "Permesso NFC negato. Abilita l'NFC nelle impostazioni del browser.";
+                return;
+            }
+
             const reader = new NDEFReader();
             await reader.scan();
-            nfcMessageElement.textContent = "Scan NFC avviato 2... Avvicina un tag!";
-            console.log("Scan NFC avviato... Avvicina un tag!");
+            nfcMessageElement.textContent = "Scan NFC avviato... Avvicina un tag!";
             
             reader.onreading = (event) => {
-                nfcMessageElement.textContent = "Tag rilevato!";
-                console.log("Tag rilevato!");
-                nfcMessageElement.textContent = "UID del Tag:", event.serialNumber;
-                console.log("UID del Tag:", event.serialNumber);
+                nfcMessageElement.textContent = `Tag rilevato! UID: ${event.serialNumber}`;
             };
+
+            reader.onerror = (error) => {
+                nfcMessageElement.textContent = `Errore NFC: ${error.message}`;
+            };
+
         } catch (error) {
-            nfcMessageElement.textContent = "Errore durante la lettura NFC:";
-            console.error("Errore durante la lettura NFC:", error);
+            if (error.name === "NotAllowedError") {
+                nfcMessageElement.textContent = "Per favore, concedi il permesso per utilizzare l'NFC quando richiesto dal browser";
+            } else {
+                nfcMessageElement.textContent = `Errore durante la lettura NFC: ${error.message}`;
+            }
+            console.error("Errore NFC:", error);
         }
     } else {
-        nfcMessageElement.textContent = "Web NFC non supportato nel browser.";
-        console.log("Web NFC non supportato nel browser.");
+        nfcMessageElement.textContent = "Web NFC non supportato in questo browser";
     }
 }
 
-readNFC();
+// Aggiungo un pulsante per richiedere esplicitamente l'accesso NFC
+const startNFCScanButton = document.createElement('button');
+startNFCScanButton.textContent = 'Attiva Scanner NFC';
+startNFCScanButton.onclick = readNFC;
+document.body.insertBefore(startNFCScanButton, nfcMessageElement);
+
+// Non avviamo più automaticamente la scansione
+// readNFC();
